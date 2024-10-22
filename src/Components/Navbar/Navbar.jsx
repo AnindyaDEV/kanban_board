@@ -1,60 +1,69 @@
-import React from 'react'
-import { useState } from 'react'
-import "./Navbar.css"
+import React, {useState} from 'react'
 import TuneIcon from '@mui/icons-material/Tune';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-function Navbar({setGrouping, setOrdering}) {
-  // available grouping and ordering options
-  let groupingOptions = ['Status', 'User', 'Priority']
-  let orderingOptions = ['Title', 'Priority']
+import './Navbar.css'
 
-  // default view for the options under display is hidden
-  const [optionsView, toggleOptionsView] = useState(false)
+export default function Navbar(props) {
+    const [toggleFilter, settoggleFilter] = useState(false);
 
-  // toggle the view of options under display
-  let toggleOptions = () => {
-    toggleOptionsView(!optionsView)
-  }
-
+    function handleDisplayToggle(e){
+        settoggleFilter(!toggleFilter);
+        if(e.target.value !== undefined){
+            props.handleGroupValue(e.target.value);
+        }
+    }
+    function handleOrderingValue(e){
+        settoggleFilter(!toggleFilter);
+        if(e.target.value !== undefined){
+            props.handleOrderValue(e.target.value);
+        }
+    }
+    
   return (
-    <div className='navbar-main'>
-        <div className='navbar-options-dropdown'>
-          <button id="navbar-dropdown-button" onClick={() => toggleOptions()}>
-              <TuneIcon sx={{fontSize: "18px"}} />
-              <p id="navbar-dropdown-text">Display</p>
-              <ArrowDropDownIcon />
-            </button>
-          {optionsView 
-          && 
-          <div className='navbar-options'>
-            <div className='navbar-option'>
-              <label htmlFor="grouping">Grouping</label>
-
-              <select name="grouping" id="grouping" onChange={e => {localStorage.setItem("grouping", e.target.value);setGrouping(e.target.value)}}>
-                {localStorage.getItem('grouping') && <option>{localStorage.getItem('grouping')}</option>}
-                {groupingOptions.map((group, key) => {
-                  return localStorage.getItem('grouping') !== group && <option key={key} value={group}>{group}</option>
-                })}
-              </select>
+    <>
+        <section className="nav">
+            <div className="nav-container">
+                <div>
+                    <div className="nav-disp-btn" onClick={handleDisplayToggle}>
+                        <div className="nav-disp-icon nav-disp-filter">
+                        <TuneIcon sx={{fontSize: "18px"}} />
+                        </div>
+                        <div className="nav-disp-heading">
+                            Display
+                        </div>
+                        <div className="nav-disp-icon nav-disp-drop">
+                        <ArrowDropDownIcon />                        
+                        </div>
+                    </div>
+                    <div className={toggleFilter ? "nav-disp-dropdown nav-disp-dropdown-show" : "nav-disp-dropdown"}>
+                        <div className="nav-disp-filters">
+                            <div className="nav-dropdown-category">
+                                Grouping
+                            </div>
+                            <div className="nav-dropdown-selector">
+                                <select value={props.groupValue} onChange={handleDisplayToggle} className='nav-selector' name="grouping" id="">
+                                    <option value="status">Status</option>
+                                    <option value="user">User</option>
+                                    <option value="priority">Priority</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="nav-disp-filters">
+                            <div className="nav-dropdown-category">
+                                Ordering
+                            </div>
+                            <div className="nav-dropdown-selector">
+                                <select value={props.orderValue} onChange={handleOrderingValue} className='nav-selector' name="grouping" id="">
+                                    <option value="priority">Priority</option>
+                                    <option value="title">Title</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className='navbar-option'>
-              <div>
-                <label htmlFor="ordering">Ordering</label>
-              </div>
-              <div>
-                <select name="ordering" id="ordering" onChange={e => {localStorage.setItem("ordering", e.target.value );setOrdering(e.target.value)}}>
-                  {localStorage.getItem('ordering') && <option>{localStorage.getItem('ordering')}</option>}
-                  {orderingOptions.map((order, key) => {
-                    return localStorage.getItem('ordering') !== order && <option key={key} value={order}>{order}</option>
-                  })}
-                </select>
-              </div>
-            </div>
-          </div>}
-        </div>
-    </div>
+        </section>
+    </>
   )
 }
-
-export default Navbar
